@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // The adapter-core module gives you access to the core ioBroker functions
 // you need to create an adapter
 const utils = require("@iobroker/adapter-core");
+const node_hid_1 = require("node-hid");
 class MiniDsp extends utils.Adapter {
     constructor(options = {}) {
         super(Object.assign(Object.assign({}, options), { name: "mini_dsp" }));
@@ -30,21 +31,22 @@ class MiniDsp extends utils.Adapter {
     onReady() {
         return __awaiter(this, void 0, void 0, function* () {
             // Initialize your adapter here
+            this.initDsp();
             // Reset the connection indicator during startup
-            this.setState("info.connection", false, true);
+            // this.setState("info.connection", false, true);
             // The adapters config (in the instance object everything under the attribute "native") is accessible via
             // this.config:
-            this.log.info("config option1: " + this.config.option1);
-            this.log.info("config option2: " + this.config.option2);
+            // this.log.info("config option1: " + this.config.option1);
+            // this.log.info("config option2: " + this.config.option2);
             /*
             For every state in the system there has to be also an object of type state
             Here a simple template for a boolean variable named "testVariable"
             Because every adapter instance uses its own unique namespace variable names can't collide with other adapters variables
             */
-            yield this.setObjectNotExistsAsync("testVariable", {
+            yield this.setObjectNotExistsAsync("masterMute", {
                 type: "state",
                 common: {
-                    name: "testVariable",
+                    name: "masterMute",
                     type: "boolean",
                     role: "indicator",
                     read: true,
@@ -53,7 +55,7 @@ class MiniDsp extends utils.Adapter {
                 native: {},
             });
             // In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
-            this.subscribeStates("testVariable");
+            this.subscribeStates("masterMuter");
             // You can also add a subscription for multiple states. The following line watches all states starting with "lights."
             // this.subscribeStates("lights.*");
             // Or, if you really must, you can also watch all states. Don't do this if you don't need to. Otherwise this will cause a lot of unnecessary load on the system:
@@ -63,29 +65,54 @@ class MiniDsp extends utils.Adapter {
                 you will notice that each setState will cause the stateChange event to fire (because of above subscribeStates cmd)
             */
             // the variable testVariable is set to true as command (ack=false)
-            yield this.setStateAsync("testVariable", true);
+            // await this.setStateAsync("testVariable", true);
             // same thing, but the value is flagged "ack"
             // ack should be always set to true if the value is received from or acknowledged from the target system
-            yield this.setStateAsync("testVariable", { val: true, ack: true });
+            // await this.setStateAsync("testVariable", { val: true, ack: true });
             // same thing, but the state is deleted after 30s (getState will return null afterwards)
-            yield this.setStateAsync("testVariable", { val: true, ack: true, expire: 30 });
+            // await this.setStateAsync("testVariable", { val: true, ack: true, expire: 30 });
             // examples for the checkPassword/checkGroup functions
-            let result = yield this.checkPasswordAsync("admin", "iobroker");
-            this.log.info("check user admin pw iobroker: " + result);
-            result = yield this.checkGroupAsync("admin", "admin");
-            this.log.info("check group user admin group admin: " + result);
+            // let result = await this.checkPasswordAsync("admin", "iobroker");
+            // this.log.info("check user admin pw iobroker: " + result);
+            // result = await this.checkGroupAsync("admin", "admin");
+            // this.log.info("check group user admin group admin: " + result);
         });
+    }
+    initDsp() {
+        try {
+            this.dsp = new node_hid_1.HID(0x2752, 0x0011);
+            this.setState("info.connection", false, true);
+        }
+        catch (e) {
+            this.log.error(e);
+        }
+    }
+    dspCmd(data) {
+        var _a;
+        const buff = new Uint8Array(65); // 64 + 1 for feature report id (neccessary in node-hid)
+        buff[1] = data.length + 1;
+        buff.set(data, 2);
+        buff[2 + data.length] =
+            (data.reduce(function (pv, cv) {
+                return pv + cv;
+            }) +
+                data.length +
+                1) %
+                0x100;
+        (_a = this.dsp) === null || _a === void 0 ? void 0 : _a.write(Array.from(buff));
     }
     /**
      * Is called when adapter shuts down - callback has to be called under any circumstances!
      */
     onUnload(callback) {
+        var _a;
         try {
             // Here you must clear all timeouts or intervals that may still be active
             // clearTimeout(timeout1);
             // clearTimeout(timeout2);
             // ...
             // clearInterval(interval1);
+            (_a = this.dsp) === null || _a === void 0 ? void 0 : _a.close();
             callback();
         }
         catch (e) {
@@ -112,7 +139,12 @@ class MiniDsp extends utils.Adapter {
     onStateChange(id, state) {
         if (state) {
             // The state was changed
-            this.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
+            if (state.val == true) {
+                this.dspCmd(new Uint8Array([0x17, 0x01]));
+            }
+            else {
+                this.dspCmd(new Uint8Array([0x17, 0x00]));
+            }
         }
         else {
             // The state was deleted

@@ -18,7 +18,8 @@
     "url": "https://github.com/stesto/ioBroker.mini_dsp"
   },
   "dependencies": {
-    "@iobroker/adapter-core": "^2.4.0"
+    "@iobroker/adapter-core": "^2.4.0",
+    "node-hid": "^1.3.0"
   },
   "devDependencies": {
     "@iobroker/testing": "^2.2.0",
@@ -27,6 +28,7 @@
     "@types/gulp": "^4.0.6",
     "@types/mocha": "^8.0.2",
     "@types/node": "^14.0.27",
+    "@types/node-hid": "^1.2.0",
     "@types/proxyquire": "^1.3.28",
     "@types/sinon": "^9.0.4",
     "@types/sinon-chai": "^3.2.4",
