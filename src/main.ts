@@ -8,7 +8,8 @@
 // The adapter-core module gives you access to the core ioBroker functions
 // you need to create an adapter
 import * as utils from "@iobroker/adapter-core";
-import { HID } from "node-hid";
+import * as hid from "node-hid";
+hid.setDriverType("libusb");
 
 // Load your modules here, e.g.:
 // import * as fs from "fs";
@@ -29,7 +30,7 @@ declare global {
 }
 
 class MiniDsp extends utils.Adapter {
-    dsp: HID | undefined;
+    dsp: hid.HID | undefined;
 
     public constructor(options: Partial<utils.AdapterOptions> = {}) {
         super({
@@ -105,7 +106,7 @@ class MiniDsp extends utils.Adapter {
 
     private initDsp(): void {
         try {
-            this.dsp = new HID(0x2752, 0x0011);
+            this.dsp = new hid.HID(0x2752, 0x0011);
             this.setState("info.connection", false, true);
         } catch (e) {
             this.log.error(e);

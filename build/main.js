@@ -12,10 +12,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// TODO: Find better way to debug
+// to debug: node --inspect-brk build/main.js --force --logs
 // The adapter-core module gives you access to the core ioBroker functions
 // you need to create an adapter
 const utils = require("@iobroker/adapter-core");
-const node_hid_1 = require("node-hid");
+const hid = require("node-hid");
+hid.setDriverType("libusb");
 class MiniDsp extends utils.Adapter {
     constructor(options = {}) {
         super(Object.assign(Object.assign({}, options), { name: "mini_dsp" }));
@@ -80,7 +83,7 @@ class MiniDsp extends utils.Adapter {
     }
     initDsp() {
         try {
-            this.dsp = new node_hid_1.HID(0x2752, 0x0011);
+            this.dsp = new hid.HID(0x2752, 0x0011);
             this.setState("info.connection", false, true);
         }
         catch (e) {
