@@ -34,9 +34,9 @@ class MiniDsp extends utils.Adapter {
     onReady() {
         return __awaiter(this, void 0, void 0, function* () {
             // Initialize your adapter here
+            this.setState("info.connection", false, true);
             this.initDsp();
             // Reset the connection indicator during startup
-            // this.setState("info.connection", false, true);
             // The adapters config (in the instance object everything under the attribute "native") is accessible via
             // this.config:
             // this.log.info("config option1: " + this.config.option1);
@@ -84,9 +84,10 @@ class MiniDsp extends utils.Adapter {
     initDsp() {
         try {
             this.dsp = new hid.HID(0x2752, 0x0011);
-            this.setState("info.connection", false, true);
+            this.setState("info.connection", true, true);
         }
         catch (e) {
+            this.log.error("Keine Verbindung mit miniDSP");
             this.log.error(e);
         }
     }
