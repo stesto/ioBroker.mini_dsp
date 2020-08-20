@@ -177,6 +177,47 @@ class MiniDsp extends utils.Adapter {
             native: {},
         });
         this.subscribeStates("miniDsp2x4HD.DropToZeroBelow");
+
+        // Inputs
+        await this.setObjectNotExistsAsync(base + "InputSource.Analog", {
+            type: "state",
+            common: {
+                name: "Analog",
+                type: "boolean",
+                role: "switch",
+                read: true,
+                write: true,
+                def: false,
+            },
+            native: {},
+        });
+        this.subscribeStates("miniDsp2x4HD.InputSource.Analog");
+        await this.setObjectNotExistsAsync(base + "InputSource.Toslink", {
+            type: "state",
+            common: {
+                name: "Toslink",
+                type: "boolean",
+                role: "switch",
+                read: true,
+                write: true,
+                def: false,
+            },
+            native: {},
+        });
+        this.subscribeStates("miniDsp2x4HD.InputSource.Toslink");
+        await this.setObjectNotExistsAsync(base + "InputSource.USB", {
+            type: "state",
+            common: {
+                name: "USB",
+                type: "boolean",
+                role: "switch",
+                read: true,
+                write: true,
+                def: false,
+            },
+            native: {},
+        });
+        this.subscribeStates("miniDsp2x4HD.InputSource.USB");
     }
 
     private dspCmd(data: Uint8Array): void {
@@ -295,6 +336,21 @@ class MiniDsp extends utils.Adapter {
             }
             if (id.includes("miniDsp2x4HD.DropToZeroBelow")) {
                 this.DropToZeroBelow = this.limit(state.val as number, 0, 100);
+            }
+            if (id.includes("InputSource.Analog")) {
+                this.dspCmd(new Uint8Array([0x34, 0x00]));
+                this.setState("mini_dsp.0.miniDsp2x4HD.InputSource.Toslink", false, true);
+                this.setState("mini_dsp.0.miniDsp2x4HD.InputSource.USB", false, true);
+            }
+            if (id.includes("InputSource.Toslink")) {
+                this.dspCmd(new Uint8Array([0x34, 0x01]));
+                this.setState("mini_dsp.0.miniDsp2x4HD.InputSource.Analog", false, true);
+                this.setState("mini_dsp.0.miniDsp2x4HD.InputSource.USB", false, true);
+            }
+            if (id.includes("InputSource.USB")) {
+                this.dspCmd(new Uint8Array([0x34, 0x02]));
+                this.setState("mini_dsp.0.miniDsp2x4HD.InputSource.Analog", false, true);
+                this.setState("mini_dsp.0.miniDsp2x4HD.InputSource.Toslink", false, true);
             }
             this.setState(id, state, true);
         }
