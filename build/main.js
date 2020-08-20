@@ -22,6 +22,42 @@ hid.setDriverType("libusb");
 class MiniDsp extends utils.Adapter {
     constructor(options = {}) {
         super(Object.assign(Object.assign({}, options), { name: "mini_dsp" }));
+        // If you need to react to object changes, uncomment the following block and the corresponding line in the constructor.
+        // You also need to subscribe to the objects with `this.subscribeObjects`, similar to `this.subscribeStates`.
+        // /**
+        //  * Is called if a subscribed object changes
+        //  */
+        // private onObjectChange(id: string, obj: ioBroker.Object | null | undefined): void {
+        //     if (obj) {
+        //         // The object was changed
+        //         this.log.info(`object ${id} changed: ${JSON.stringify(obj)}`);
+        //     } else {
+        //         // The object was deleted
+        //         this.log.info(`object ${id} deleted`);
+        //     }
+        // }
+        /**
+         * Is called if a subscribed state changes
+         */
+        // If you need to react to object changes, uncomment the following block and the corresponding line in the constructor.
+        // You also need to subscribe to the objects with `this.subscribeObjects`, similar to `this.subscribeStates`.
+        // /**
+        //  * Is called if a subscribed object changes
+        //  */
+        // private onObjectChange(id: string, obj: ioBroker.Object | null | undefined): void {
+        //     if (obj) {
+        //         // The object was changed
+        //         this.log.info(`object ${id} changed: ${JSON.stringify(obj)}`);
+        //     } else {
+        //         // The object was deleted
+        //         this.log.info(`object ${id} deleted`);
+        //     }
+        // }
+        /**
+         * Is called if a subscribed state changes
+         */
+        this.DropToZeroBelow = 0;
+        this.MinimumVolume = 255;
         this.on("ready", this.onReady.bind(this));
         this.on("stateChange", this.onStateChange.bind(this));
         // this.on("objectChange", this.onObjectChange.bind(this));
@@ -35,7 +71,8 @@ class MiniDsp extends utils.Adapter {
         return __awaiter(this, void 0, void 0, function* () {
             // Initialize your adapter here
             this.setState("info.connection", false, true);
-            this.initDsp();
+            this.createDspStates();
+            this.connectToDsp();
             // Reset the connection indicator during startup
             // The adapters config (in the instance object everything under the attribute "native") is accessible via
             // this.config:
@@ -46,19 +83,18 @@ class MiniDsp extends utils.Adapter {
             Here a simple template for a boolean variable named "testVariable"
             Because every adapter instance uses its own unique namespace variable names can't collide with other adapters variables
             */
-            yield this.setObjectNotExistsAsync("masterMute", {
-                type: "state",
-                common: {
-                    name: "masterMute",
-                    type: "boolean",
-                    role: "indicator",
-                    read: true,
-                    write: true,
-                },
-                native: {},
-            });
+            // await this.setObjectNotExistsAsync("masterMute", {
+            //     type: "state",
+            //     common: {
+            //         name: "masterMute",
+            //         type: "boolean",
+            //         role: "indicator",
+            //         read: true,
+            //         write: true,
+            //     },
+            //     native: {},
+            // });
             // In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
-            this.subscribeStates("masterMute");
             // You can also add a subscription for multiple states. The following line watches all states starting with "lights."
             // this.subscribeStates("lights.*");
             // Or, if you really must, you can also watch all states. Don't do this if you don't need to. Otherwise this will cause a lot of unnecessary load on the system:
@@ -81,21 +117,88 @@ class MiniDsp extends utils.Adapter {
             // this.log.info("check group user admin group admin: " + result);
         });
     }
-    initDsp() {
+    connectToDsp() {
         try {
             this.dsp = new hid.HID(0x2752, 0x0011);
+            this.log.info("Connected with miniDsp");
             this.setState("info.connection", true, true);
         }
         catch (e) {
-            this.log.error("Keine Verbindung mit miniDSP");
+            this.log.error("Can't connect with miniDsp");
             this.log.error(e);
         }
     }
+    createDspStates() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const base = "miniDsp2x4HD.";
+            yield this.setObjectNotExistsAsync(base + "MasterMute", {
+                type: "state",
+                common: {
+                    name: "MasterMute",
+                    type: "boolean",
+                    role: "switch",
+                    read: true,
+                    write: true,
+                    def: false,
+                },
+                native: {},
+            });
+            this.subscribeStates("miniDsp2x4HD.MasterMute");
+            yield this.setObjectNotExistsAsync(base + "MasterVolume", {
+                type: "state",
+                common: {
+                    name: "MasterVolume",
+                    type: "number",
+                    role: "level.volume",
+                    read: true,
+                    write: true,
+                    min: 0,
+                    max: 100,
+                    unit: "%",
+                    def: 100,
+                },
+                native: {},
+            });
+            this.subscribeStates("miniDsp2x4HD.MasterVolume");
+            yield this.setObjectNotExistsAsync(base + "MinimumVolume", {
+                type: "state",
+                common: {
+                    name: "MinimumVolume",
+                    type: "number",
+                    role: "level",
+                    read: true,
+                    write: true,
+                    max: 0,
+                    min: -127.5,
+                    unit: "db",
+                    def: 0,
+                },
+                native: {},
+            });
+            this.subscribeStates("miniDsp2x4HD.MinimumVolume");
+            yield this.setObjectNotExistsAsync(base + "DropToZeroBelow", {
+                type: "state",
+                common: {
+                    name: "DropToZeroBelow",
+                    type: "number",
+                    role: "level.volume",
+                    read: true,
+                    write: true,
+                    min: 0,
+                    max: 100,
+                    unit: "%",
+                },
+                native: {},
+            });
+            this.subscribeStates("miniDsp2x4HD.DropToZeroBelow");
+        });
+    }
     dspCmd(data) {
         var _a;
-        const buff = new Uint8Array(65); // 64 + 1 for feature report id (neccessary in node-hid)
-        buff[1] = data.length + 1;
-        buff.set(data, 2);
+        const buff = new Uint8Array(65); // 64 + 1 for feature report id (neccessary in node-hid I guess?)
+        buff[1] = data.length + 1; // Length-byte containing length of data + 1 byte for checksum at the end
+        buff.set(data, 2); // insert data
+        // calculate checksum
         buff[2 + data.length] =
             (data.reduce(function (pv, cv) {
                 return pv + cv;
@@ -103,7 +206,22 @@ class MiniDsp extends utils.Adapter {
                 data.length +
                 1) %
                 0x100;
-        (_a = this.dsp) === null || _a === void 0 ? void 0 : _a.write(Array.from(buff));
+        (_a = this.dsp) === null || _a === void 0 ? void 0 : _a.write(Array.from(buff)); // write to miniDSP
+    }
+    /**
+     * limits a value to a given range
+     * @param value the value which should be in a range
+     * @param min the lowest possible value
+     * @param max the highest possible value
+     */
+    limit(value, min, max) {
+        if (value <= min) {
+            return min;
+        }
+        if (value >= max) {
+            return max;
+        }
+        return value;
     }
     /**
      * Is called when adapter shuts down - callback has to be called under any circumstances!
@@ -123,36 +241,41 @@ class MiniDsp extends utils.Adapter {
             callback();
         }
     }
-    // If you need to react to object changes, uncomment the following block and the corresponding line in the constructor.
-    // You also need to subscribe to the objects with `this.subscribeObjects`, similar to `this.subscribeStates`.
-    // /**
-    //  * Is called if a subscribed object changes
-    //  */
-    // private onObjectChange(id: string, obj: ioBroker.Object | null | undefined): void {
-    //     if (obj) {
-    //         // The object was changed
-    //         this.log.info(`object ${id} changed: ${JSON.stringify(obj)}`);
-    //     } else {
-    //         // The object was deleted
-    //         this.log.info(`object ${id} deleted`);
-    //     }
-    // }
-    /**
-     * Is called if a subscribed state changes
-     */
     onStateChange(id, state) {
-        if (state) {
+        if (state && state.ack == false) {
             // The state was changed
-            if (state.val == true) {
-                this.dspCmd(new Uint8Array([0x17, 0x01]));
+            if (id.includes("miniDsp2x4HD.MasterMute")) {
+                if (state.val == true) {
+                    this.dspCmd(new Uint8Array([0x17, 0x01]));
+                }
+                else {
+                    this.dspCmd(new Uint8Array([0x17, 0x00]));
+                }
             }
-            else {
-                this.dspCmd(new Uint8Array([0x17, 0x00]));
+            if (id.includes("miniDsp2x4HD.MasterVolume")) {
+                if (state.val >= 0 && state.val <= 100) {
+                    let newVol = 0;
+                    const vol = this.limit(state.val, 0, 100);
+                    if (vol > this.DropToZeroBelow) {
+                        newVol = vol * (-this.MinimumVolume / 100) + this.MinimumVolume;
+                    }
+                    else {
+                        newVol =
+                            ((255 - (this.DropToZeroBelow * (-this.MinimumVolume / 100) + this.MinimumVolume)) /
+                                (0 - this.DropToZeroBelow)) *
+                                vol +
+                                255;
+                    }
+                    this.dspCmd(new Uint8Array([0x42, newVol]));
+                }
             }
-        }
-        else {
-            // The state was deleted
-            this.log.info(`state ${id} deleted`);
+            if (id.includes("miniDsp2x4HD.MinimumVolume")) {
+                this.MinimumVolume = Math.round(this.limit(state.val, -127.5, 0) * -2);
+            }
+            if (id.includes("miniDsp2x4HD.DropToZeroBelow")) {
+                this.DropToZeroBelow = this.limit(state.val, 0, 100);
+            }
+            this.setState(id, state, true);
         }
     }
 }
