@@ -333,7 +333,7 @@ class MiniDsp extends utils.Adapter {
                 this.dspCmd(new Uint8Array([0x34, 0x02]));
                 this.setState("mini_dsp.0.miniDsp2x4HD.InputSource.Analog", false, true);
                 this.setState("mini_dsp.0.miniDsp2x4HD.InputSource.Toslink", false, true);
-                this.setState("mini_dsp.0.miniDsp2x4HD.InputSource.USB", false, true);
+                this.setState("mini_dsp.0.miniDsp2x4HD.InputSource.USB", true, true);
                 return;
             }
             this.setState(id, state, true);
