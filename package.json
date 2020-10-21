@@ -1,0 +1,96 @@
+{
+  "_from": "https://github.com/stesto/ioBroker.mini_dsp/tarball/9712e31aff74d7355ea32965395760c3512aac91",
+  "_id": "iobroker.mini_dsp@0.0.1",
+  "_inBundle": false,
+  "_integrity": "sha512-Ac99Rf0tRthJU51L6dRSxBRbNJGh7WbDq1uMJQqRprBbF9HqjmgrIUvP2CXhPccdmWbv2kOA7h4eOYOVBhfUug==",
+  "_location": "/iobroker.mini_dsp",
+  "_phantomChildren": {
+    "@types/node": "13.13.2"
+  },
+  "_requested": {
+    "type": "remote",
+    "raw": "https://github.com/stesto/ioBroker.mini_dsp/tarball/9712e31aff74d7355ea32965395760c3512aac91",
+    "rawSpec": "https://github.com/stesto/ioBroker.mini_dsp/tarball/9712e31aff74d7355ea32965395760c3512aac91",
+    "saveSpec": "https://github.com/stesto/ioBroker.mini_dsp/tarball/9712e31aff74d7355ea32965395760c3512aac91",
+    "fetchSpec": "https://github.com/stesto/ioBroker.mini_dsp/tarball/9712e31aff74d7355ea32965395760c3512aac91"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://github.com/stesto/ioBroker.mini_dsp/tarball/9712e31aff74d7355ea32965395760c3512aac91",
+  "_shasum": "bbcce8675f208ed6d1e8afa4e0f9abd30fec2c4c",
+  "_spec": "https://github.com/stesto/ioBroker.mini_dsp/tarball/9712e31aff74d7355ea32965395760c3512aac91",
+  "_where": "/",
+  "author": {
+    "name": "stesto",
+    "email": "s.stodder@hotmail.de"
+  },
+  "bugs": {
+    "url": "https://github.com/stesto/ioBroker.mini_dsp/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "@iobroker/adapter-core": "^2.4.0",
+    "node-hid": "^1.3.1"
+  },
+  "deprecated": false,
+  "description": "Adapter to communicate with a miniDSP",
+  "devDependencies": {
+    "@iobroker/testing": "^2.2.0",
+    "@types/chai": "^4.2.12",
+    "@types/chai-as-promised": "^7.1.3",
+    "@types/gulp": "^4.0.6",
+    "@types/mocha": "^8.0.2",
+    "@types/node": "^14.0.27",
+    "@types/node-hid": "^1.3.0",
+    "@types/proxyquire": "^1.3.28",
+    "@types/sinon": "^9.0.4",
+    "@types/sinon-chai": "^3.2.4",
+    "@typescript-eslint/eslint-plugin": "^3.9.0",
+    "@typescript-eslint/parser": "^3.9.0",
+    "axios": "^0.19.2",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "eslint": "^7.7.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "gulp": "^4.0.2",
+    "mocha": "^8.1.1",
+    "prettier": "^2.0.5",
+    "proxyquire": "^2.1.3",
+    "rimraf": "^3.0.2",
+    "sinon": "^9.0.3",
+    "sinon-chai": "^3.5.0",
+    "source-map-support": "^0.5.19",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.7"
+  },
+  "homepage": "https://github.com/stesto/ioBroker.mini_dsp",
+  "keywords": [
+    "minidsp",
+    "sound",
+    "hi-fi"
+  ],
+  "license": "MIT",
+  "main": "build/main.js",
+  "name": "iobroker.mini_dsp",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stesto/ioBroker.mini_dsp.git"
+  },
+  "scripts": {
+    "build": "npm run build:ts",
+    "build:ts": "tsc -p tsconfig.build.json",
+    "lint": "eslint --ext .ts src",
+    "prebuild": "rimraf ./build",
+    "test": "npm run test:ts && npm run test:package",
+    "test:integration": "mocha test/integration --exit",
+    "test:package": "mocha test/package --exit",
+    "test:ts": "mocha --opts test/mocha.custom.opts",
+    "test:unit": "mocha test/unit --exit",
+    "watch": "npm run watch:ts",
+    "watch:ts": "tsc -p tsconfig.build.json --watch"
+  },
+  "version": "0.0.1"
+}

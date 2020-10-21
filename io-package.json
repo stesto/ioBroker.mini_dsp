@@ -1,0 +1,101 @@
+{
+  "common": {
+    "name": "mini_dsp",
+    "version": "0.0.1",
+    "news": {
+      "0.0.1": {
+        "en": "initial release",
+        "de": "Erstveröffentlichung",
+        "ru": "Начальная версия",
+        "pt": "lançamento inicial",
+        "nl": "Eerste uitgave",
+        "fr": "Première version",
+        "it": "Versione iniziale",
+        "es": "Versión inicial",
+        "pl": "Pierwsze wydanie",
+        "zh-cn": "首次出版"
+      }
+    },
+    "title": "miniDSP",
+    "titleLang": {
+      "en": "miniDSP",
+      "de": "miniDSP",
+      "ru": "miniDSP",
+      "pt": "miniDSP",
+      "nl": "miniDSP",
+      "fr": "miniDSP",
+      "it": "miniDSP",
+      "es": "miniDSP",
+      "pl": "miniDSP",
+      "zh-cn": "小型DSP"
+    },
+    "desc": {
+      "en": "Adapter to communicate with a miniDSP",
+      "de": "Adapter zur Kommunikation mit einem miniDSP",
+      "ru": "Адаптер для связи с miniDSP",
+      "pt": "Adaptador para se comunicar com um miniDSP",
+      "nl": "Adapter om te communiceren met een miniDSP",
+      "fr": "Adaptateur pour communiquer avec un miniDSP",
+      "it": "Adattatore per comunicare con un miniDSP",
+      "es": "Adaptador para comunicarse con un miniDSP",
+      "pl": "Adapter do komunikacji z miniDSP",
+      "zh-cn": "与miniDSP通信的适配器"
+    },
+    "authors": [
+      "stesto <s.stodder@hotmail.de>"
+    ],
+    "keywords": [
+      "minidsp",
+      "sound",
+      "hi-fi"
+    ],
+    "license": "MIT",
+    "platform": "Javascript/Node.js",
+    "main": "build/main.js",
+    "icon": "mini_dsp.png",
+    "enabled": true,
+    "extIcon": "https://raw.githubusercontent.com/stesto/ioBroker.mini_dsp/master/admin/mini_dsp.png",
+    "readme": "https://github.com/stesto/ioBroker.mini_dsp/blob/master/README.md",
+    "loglevel": "info",
+    "mode": "daemon",
+    "type": "multimedia",
+    "compact": true,
+    "connectionType": "local",
+    "dataSource": "poll",
+    "materialize": true,
+    "dependencies": [
+      {
+        "js-controller": ">=1.4.2"
+      }
+    ],
+    "installedFrom": "https://github.com/stesto/ioBroker.mini_dsp/tarball/9712e31aff74d7355ea32965395760c3512aac91"
+  },
+  "native": {
+    "option1": true,
+    "option2": "42"
+  },
+  "objects": [],
+  "instanceObjects": [
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "Information"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connection",
+      "type": "state",
+      "common": {
+        "role": "indicator.connected",
+        "name": "Device or service connected",
+        "type": "boolean",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    }
+  ]
+}
