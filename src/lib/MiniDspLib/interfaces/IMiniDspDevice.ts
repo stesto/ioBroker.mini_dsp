@@ -12,6 +12,7 @@ export interface IMiniDspDevice {
     readonly outputChannels: IOutputChannel[];
 
     connect(): void;
+    close(): void;
 
     _sendCmd(cmd: Uint8Array): void;
 

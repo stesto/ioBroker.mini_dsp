@@ -18,6 +18,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // you need to create an adapter
 const utils = require("@iobroker/adapter-core");
 const hid = require("node-hid");
+const MiniDspDevice_1 = require("./lib/MiniDspLib/MiniDspDevice");
+const util = require("./lib/utils");
 hid.setDriverType("libusb");
 class MiniDsp extends utils.Adapter {
     constructor(options = {}) {
@@ -69,10 +71,10 @@ class MiniDsp extends utils.Adapter {
      */
     onReady() {
         return __awaiter(this, void 0, void 0, function* () {
-            // Initialize your adapter here
             this.setState("info.connection", false, true);
             this.createDspStates();
-            this.connectToDsp();
+            this.dsp = new MiniDspDevice_1.MiniDspDevice(0x2752, 0x0011, ["Analog", "Toslink", "USB"], 2, 4);
+            this.dsp.connect();
             // Reset the connection indicator during startup
             // The adapters config (in the instance object everything under the attribute "native") is accessible via
             // this.config:
@@ -116,17 +118,6 @@ class MiniDsp extends utils.Adapter {
             // result = await this.checkGroupAsync("admin", "admin");
             // this.log.info("check group user admin group admin: " + result);
         });
-    }
-    connectToDsp() {
-        try {
-            this.dsp = new hid.HID(0x2752, 0x0011);
-            this.log.info("Connected with miniDsp");
-            this.setState("info.connection", true, true);
-        }
-        catch (e) {
-            this.log.error("Can't connect with miniDsp");
-            this.log.error(e);
-        }
     }
     createDspStates() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -233,36 +224,6 @@ class MiniDsp extends utils.Adapter {
             this.subscribeStates("miniDsp2x4HD.InputSource.USB");
         });
     }
-    dspCmd(data) {
-        var _a;
-        const buff = new Uint8Array(65); // 64 + 1 for feature report id (neccessary in node-hid I guess?)
-        buff[1] = data.length + 1; // Length-byte containing length of data + 1 byte for checksum at the end
-        buff.set(data, 2); // insert data
-        // calculate checksum
-        buff[2 + data.length] =
-            (data.reduce(function (pv, cv) {
-                return pv + cv;
-            }) +
-                data.length +
-                1) %
-                0x100;
-        (_a = this.dsp) === null || _a === void 0 ? void 0 : _a.write(Array.from(buff)); // write to miniDSP
-    }
-    /**
-     * limits a value to a given range
-     * @param value the value which should be in a range
-     * @param min the lowest possible value
-     * @param max the highest possible value
-     */
-    limit(value, min, max) {
-        if (value <= min) {
-            return min;
-        }
-        if (value >= max) {
-            return max;
-        }
-        return value;
-    }
     /**
      * Is called when adapter shuts down - callback has to be called under any circumstances!
      */
@@ -285,17 +246,12 @@ class MiniDsp extends utils.Adapter {
         if (state && state.ack == false) {
             // The state was changed
             if (id.includes("miniDsp2x4HD.MasterMute")) {
-                if (state.val == true) {
-                    this.dspCmd(new Uint8Array([0x17, 0x01]));
-                }
-                else {
-                    this.dspCmd(new Uint8Array([0x17, 0x00]));
-                }
+                this.dsp.masterMute = state.val;
             }
             if (id.includes("miniDsp2x4HD.MasterVolume")) {
                 if (state.val >= 0 && state.val <= 100) {
                     let newVol = 0;
-                    const vol = this.limit(state.val, 0, 100);
+                    const vol = util.cramp(state.val, 0, 100);
                     if (vol > this.DropToZeroBelow) {
                         newVol = vol * (-this.MinimumVolume / 100) + this.MinimumVolume;
                     }
@@ -306,31 +262,31 @@ class MiniDsp extends utils.Adapter {
                                 vol +
                                 255;
                     }
-                    this.dspCmd(new Uint8Array([0x42, newVol]));
+                    this.dsp.masterVolume = newVol / -2;
                 }
             }
             if (id.includes("miniDsp2x4HD.MinimumVolume")) {
-                this.MinimumVolume = Math.round(this.limit(state.val, -127.5, 0) * -2);
+                this.MinimumVolume = Math.round(util.cramp(state.val, -127.5, 0) * -2);
             }
             if (id.includes("miniDsp2x4HD.DropToZeroBelow")) {
-                this.DropToZeroBelow = this.limit(state.val, 0, 100);
+                this.DropToZeroBelow = util.cramp(state.val, 0, 100);
             }
             if (id.includes("InputSource.Analog")) {
-                this.dspCmd(new Uint8Array([0x34, 0x00]));
+                this.dsp.setInputSource("Analog");
                 this.setState("mini_dsp.0.miniDsp2x4HD.InputSource.Analog", true, true);
                 this.setState("mini_dsp.0.miniDsp2x4HD.InputSource.Toslink", false, true);
                 this.setState("mini_dsp.0.miniDsp2x4HD.InputSource.USB", false, true);
                 return;
             }
             if (id.includes("InputSource.Toslink")) {
-                this.dspCmd(new Uint8Array([0x34, 0x01]));
+                this.dsp.setInputSource("Toslink");
                 this.setState("mini_dsp.0.miniDsp2x4HD.InputSource.Analog", false, true);
                 this.setState("mini_dsp.0.miniDsp2x4HD.InputSource.Toslink", true, true);
                 this.setState("mini_dsp.0.miniDsp2x4HD.InputSource.USB", false, true);
                 return;
             }
             if (id.includes("InputSource.USB")) {
-                this.dspCmd(new Uint8Array([0x34, 0x02]));
+                this.dsp.setInputSource("USB");
                 this.setState("mini_dsp.0.miniDsp2x4HD.InputSource.Analog", false, true);
                 this.setState("mini_dsp.0.miniDsp2x4HD.InputSource.Toslink", false, true);
                 this.setState("mini_dsp.0.miniDsp2x4HD.InputSource.USB", true, true);
