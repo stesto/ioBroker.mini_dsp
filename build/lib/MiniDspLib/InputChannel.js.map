@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../src/lib/MiniDspLib/InputChannel.ts"],
+  "sourcesContent": ["import * as utils from \"../../lib/utils\";\nimport { IInputChannel } from \"./interfaces/IInputChannel\";\nimport { IMiniDspDevice } from \"./interfaces/IMiniDspDevice\";\nimport { MiniDspDevice } from \"./MiniDspDevice\";\n\nexport class InputChannel implements IInputChannel {\n    readonly miniDspDevice: IMiniDspDevice;\n\n    readonly index: number;\n\n    constructor(miniDspDevice: IMiniDspDevice, index: number) {\n        this.miniDspDevice = miniDspDevice;\n        this.index = index;\n    }\n\n    public get gain(): number {\n        return 0;\n    }\n    public set gain(value: number) {\n        (<MiniDspDevice>this.miniDspDevice)._setChannelGain(this.index, utils.cramp(value, -72.0, 12.0));\n    }\n\n    public get mute(): boolean {\n        return false;\n    }\n    public set mute(value: boolean) {\n        (<MiniDspDevice>this.miniDspDevice)._setChannelMute(this.index, value ? 0x01 : 0x02);\n    }\n}\n"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,YAAuB;AAKhB,MAAM,aAAsC;AAAA,EAK/C,YAAY,eAA+B,OAAe;AACtD,SAAK,gBAAgB;AACrB,SAAK,QAAQ;AAAA,EACjB;AAAA,MAEW,OAAe;AACtB,WAAO;AAAA,EACX;AAAA,MACW,KAAK,OAAe;AAC3B,IAAgB,KAAK,cAAe,gBAAgB,KAAK,OAAO,MAAM,MAAM,OAAO,KAAO,EAAI,CAAC;AAAA,EACnG;AAAA,MAEW,OAAgB;AACvB,WAAO;AAAA,EACX;AAAA,MACW,KAAK,OAAgB;AAC5B,IAAgB,KAAK,cAAe,gBAAgB,KAAK,OAAO,QAAQ,IAAO,CAAI;AAAA,EACvF;AACJ;",
+  "names": []
+}

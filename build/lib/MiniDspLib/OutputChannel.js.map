@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../src/lib/MiniDspLib/OutputChannel.ts"],
+  "sourcesContent": ["import { InputChannel } from \"./InputChannel\";\nimport { IMiniDspDevice } from \"./interfaces/IMiniDspDevice\";\nimport { IOutputChannel } from \"./interfaces/IOutputChannel\";\nimport { MiniDspDevice } from \"./MiniDspDevice\";\n\nexport class OutputChannel extends InputChannel implements IOutputChannel {\n    constructor(miniDspDevice: IMiniDspDevice, index: number) {\n        super(miniDspDevice, index);\n    }\n\n    public get invert(): boolean {\n        return false; // return if phase is inverted\n    }\n    public set invert(value: boolean) {\n        (<MiniDspDevice>this.miniDspDevice)._setChannelMute(\n            this.index - this.miniDspDevice.inputChannels.length + 0x50,\n            value ? 0x01 : 0x00,\n        );\n    }\n\n    public get delay(): number {\n        return 0;\n    }\n    public set delay(value: number) {\n        //set delay\n    }\n}\n"],
+  "mappings": ";;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA,0BAA6B;AAKtB,MAAM,sBAAsB,iCAAuC;AAAA,EACtE,YAAY,eAA+B,OAAe;AACtD,UAAM,eAAe,KAAK;AAAA,EAC9B;AAAA,MAEW,SAAkB;AACzB,WAAO;AAAA,EACX;AAAA,MACW,OAAO,OAAgB;AAC9B,IAAgB,KAAK,cAAe,gBAChC,KAAK,QAAQ,KAAK,cAAc,cAAc,SAAS,IACvD,QAAQ,IAAO,CACnB;AAAA,EACJ;AAAA,MAEW,QAAgB;AACvB,WAAO;AAAA,EACX;AAAA,MACW,MAAM,OAAe;AAAA,EAEhC;AACJ;",
+  "names": []
+}

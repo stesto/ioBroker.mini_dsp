@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../../src/lib/MiniDspLib/interfaces/IMiniDspDevice.ts"],
+  "sourcesContent": ["import { IInputChannel } from \"./IInputChannel\";\nimport { IInputSource } from \"./IInputSource\";\nimport { IOutputChannel } from \"./IOutputChannel\";\n\nexport interface IMiniDspDevice {\n    readonly vendorId: number;\n    readonly productId: number;\n\n    readonly inputSources: IInputSource[];\n\n    readonly inputChannels: IInputChannel[];\n    readonly outputChannels: IOutputChannel[];\n\n    connect(): void;\n    close(): void;\n\n    _sendCmd(cmd: Uint8Array): void;\n\n    masterVolume: number;\n    masterMute: boolean;\n}\n"],
+  "mappings": ";;;;;;;;;;;;;AAAA;AAAA;",
+  "names": []
+}

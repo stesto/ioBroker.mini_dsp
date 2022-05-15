@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../../src/lib/MiniDspLib/interfaces/IInputChannel.ts"],
+  "sourcesContent": ["export interface IInputChannel {\n    /**\n     * represents the index which the dsp uses.\n     * The indices get assigned in this order: inputs -> outputs -> routes\n     * For the miniDsp2x4HD there is an offset of 1A:\n     * Inputs: 26 - 27 (1A - 1B)\n     * Output 28 - 31 (1C - 1F)\n     * Routing (handled as channels) 20 - 27\n     */\n    readonly index: number;\n\n    gain: number;\n    mute: boolean;\n}\n"],
+  "mappings": ";;;;;;;;;;;;;AAAA;AAAA;",
+  "names": []
+}

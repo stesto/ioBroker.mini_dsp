@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../../src/lib/MiniDspLib/interfaces/IInputSource.ts"],
+  "sourcesContent": ["export interface IInputSource {\n    readonly index: number;\n    readonly name: string;\n\n    selected: boolean;\n}\n"],
+  "mappings": ";;;;;;;;;;;;;AAAA;AAAA;",
+  "names": []
+}

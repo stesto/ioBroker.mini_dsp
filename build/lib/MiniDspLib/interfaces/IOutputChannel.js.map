@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../../src/lib/MiniDspLib/interfaces/IOutputChannel.ts"],
+  "sourcesContent": ["import { IInputChannel } from \"./IInputChannel\";\n\nexport interface IOutputChannel extends IInputChannel {\n    invert: boolean;\n    delay: number;\n}\n"],
+  "mappings": ";;;;;;;;;;;;;AAAA;AAAA;",
+  "names": []
+}

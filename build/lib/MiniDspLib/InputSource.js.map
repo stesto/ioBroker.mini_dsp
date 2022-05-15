@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../src/lib/MiniDspLib/InputSource.ts"],
+  "sourcesContent": ["import { IInputSource } from \"./interfaces/IInputSource\";\nimport { IMiniDspDevice } from \"./interfaces/IMiniDspDevice\";\n\nexport class InputSource implements IInputSource {\n    readonly miniDspDevice: IMiniDspDevice;\n\n    readonly index: number;\n    readonly name: string;\n\n    constructor(miniDspDevice: IMiniDspDevice, index: number, name: string) {\n        this.miniDspDevice = miniDspDevice;\n        this.index = index;\n        this.name = name;\n    }\n\n    public get selected(): boolean {\n        return false;\n    }\n    public set selected(value: boolean) {\n        if (value) {\n            this.miniDspDevice._sendCmd(new Uint8Array([0x34, this.index]));\n        }\n    }\n}\n"],
+  "mappings": ";;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAGO,MAAM,YAAoC;AAAA,EAM7C,YAAY,eAA+B,OAAe,MAAc;AACpE,SAAK,gBAAgB;AACrB,SAAK,QAAQ;AACb,SAAK,OAAO;AAAA,EAChB;AAAA,MAEW,WAAoB;AAC3B,WAAO;AAAA,EACX;AAAA,MACW,SAAS,OAAgB;AAChC,QAAI,OAAO;AACP,WAAK,cAAc,SAAS,IAAI,WAAW,CAAC,IAAM,KAAK,KAAK,CAAC,CAAC;AAAA,IAClE;AAAA,EACJ;AACJ;",
+  "names": []
+}

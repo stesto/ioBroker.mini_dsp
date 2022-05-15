@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/lib/utils.ts"],
+  "sourcesContent": ["export function cramp(value: number, min: number, max: number): number {\n    if (value <= min) {\n        return min;\n    }\n    if (value >= max) {\n        return max;\n    }\n    return value;\n}\n\n// https://stackoverflow.com/a/7343013/12593971\nexport function round(value: number, precision: number): number {\n    const multiplier = Math.pow(10, precision || 0);\n    return Math.round(value * multiplier) / multiplier;\n}\n"],
+  "mappings": ";;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAO,eAAe,OAAe,KAAa,KAAqB;AACnE,MAAI,SAAS,KAAK;AACd,WAAO;AAAA,EACX;AACA,MAAI,SAAS,KAAK;AACd,WAAO;AAAA,EACX;AACA,SAAO;AACX;AAGO,eAAe,OAAe,WAA2B;AAC5D,QAAM,aAAa,KAAK,IAAI,IAAI,aAAa,CAAC;AAC9C,SAAO,KAAK,MAAM,QAAQ,UAAU,IAAI;AAC5C;",
+  "names": []
+}
