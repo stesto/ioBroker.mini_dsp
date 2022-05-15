@@ -1,6 +1,6 @@
 {
   "name": "iobroker.mini_dsp",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Adapter to connect to and control miniDSP devices via USB",
   "author": {
     "name": "stesto",

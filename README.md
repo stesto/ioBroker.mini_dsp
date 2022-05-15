@@ -61,7 +61,7 @@ _currently not supported_
     ### **WORK IN PROGRESS**
 -->
 
-### **WORK IN PROGRESS**
+### 0.0.2 (2022-05-15)
 
 -   (stesto) initial release
 
